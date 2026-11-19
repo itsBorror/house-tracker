@@ -90,7 +90,7 @@ function SupplierCard({ s }: { s: Supplier }) {
       <button style={{ width: '100%', textAlign: 'left', display: 'block' }} onClick={() => nav.push(<SupplierDetail id={s.id} />)} className="press">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <div style={{ fontSize: 20, fontWeight: 600 }}>{s.name}</div>
-          <span className="caption" style={{ color: 'var(--blue)' }}>
+          <span className="caption" style={{ color: 'var(--tint)' }}>
             Details ›
           </span>
         </div>

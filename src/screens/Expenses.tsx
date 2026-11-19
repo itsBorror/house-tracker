@@ -109,7 +109,7 @@ export function Expenses() {
               {dt(total)}
             </div>
           </div>
-          <span className="caption" style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--blue)' }}>
+          <span className="caption" style={{ display: 'flex', alignItems: 'center', gap: 4, color: 'var(--tint)' }}>
             By category <ChevronDown size={14} style={{ transform: showBreakdown ? 'rotate(180deg)' : '', transition: 'transform .2s' }} />
           </span>
         </div>
@@ -179,12 +179,12 @@ function PickerSheet({
       <div className="list">
         <button className="row" onClick={() => choose(null)}>
           <div className="row-main">All</div>
-          {value == null && <span style={{ color: 'var(--blue)' }}>✓</span>}
+          {value == null && <span style={{ color: 'var(--tint)' }}>✓</span>}
         </button>
         {options.map((o) => (
           <button className="row" key={o.id} onClick={() => choose(o.id)}>
             <div className="row-main">{o.label}</div>
-            {value === o.id && <span style={{ color: 'var(--blue)' }}>✓</span>}
+            {value === o.id && <span style={{ color: 'var(--tint)' }}>✓</span>}
           </button>
         ))}
       </div>
