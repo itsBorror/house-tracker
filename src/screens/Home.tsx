@@ -18,7 +18,7 @@ export function Home({ goTo }: { goTo: (t: Tab) => void }) {
   const store = useStore()
   const d = useDashboard()
   const expenses = useRows('expenses')
-  const loading = !store.lastSync && !d.hasAnyData && store.online
+  const loading = !store.local && !store.lastSync && !d.hasAnyData && store.online
 
   const recent = [...expenses].sort((a, b) => b.date.localeCompare(a.date) || (b.created_at || '').localeCompare(a.created_at || '')).slice(0, 5)
   const maxMonth = Math.max(1, ...d.monthly.map((m) => m.total))
