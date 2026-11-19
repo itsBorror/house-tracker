@@ -41,7 +41,7 @@ export function Home({ goTo }: { goTo: (t: Tab) => void }) {
     >
       {d.dueSuppliers.map(({ supplier, stats }) => {
         const late = stats.current.status === 'late'
-        const color = late ? 'var(--red)' : 'var(--orange)'
+        const color = late ? 'var(--red)' : 'var(--orange-fill)'
         return (
           <div className="banner" key={supplier.id}>
             <div className="b-icon" style={{ background: color }}>
@@ -68,7 +68,7 @@ export function Home({ goTo }: { goTo: (t: Tab) => void }) {
       })}
       {d.dueWorkers.map(({ worker }) => (
         <div className="banner" key={worker.id}>
-          <div className="b-icon" style={{ background: 'var(--orange)' }}>
+          <div className="b-icon" style={{ background: 'var(--orange-fill)' }}>
             <CalendarClock size={20} />
           </div>
           <div className="b-text">
@@ -77,7 +77,7 @@ export function Home({ goTo }: { goTo: (t: Tab) => void }) {
           </div>
           <button
             className="btn small"
-            style={{ background: 'var(--orange)' }}
+            style={{ background: 'var(--orange-fill)' }}
             onClick={() => {
               primeKeyboard()
               nav.openSheet(() => <PayWorkerSheet worker={worker} />)
