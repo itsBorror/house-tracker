@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react'
 import type { Session } from '@supabase/supabase-js'
 import { Hammer, House, Plus, Receipt, Users, Wallet } from 'lucide-react'
 import { isConfigured, supabase } from './lib/supabase'
-import { startStore, stopStore } from './lib/store'
+import { startLocalStore, startStore, stopStore } from './lib/store'
 import { hasPin } from './lib/pin'
 import { NavProvider, ToastHost, primeKeyboard, useNav } from './components/ui'
-import { HouseholdSetup, Login, Logo, NotConfigured } from './screens/Auth'
+import { HouseholdSetup, Login, Logo } from './screens/Auth'
 import { LockScreen } from './screens/Lock'
 import { Home } from './screens/Home'
 import { Expenses } from './screens/Expenses'
@@ -25,9 +25,32 @@ const readHid = (uid: string) => {
   }
 }
 
+/**
+ * Sign-in is switched off for now: the app runs in local mode (data stays on
+ * this phone). To turn accounts and sync back on, set VITE_ENABLE_LOGIN=true
+ * together with the two Supabase variables and redeploy.
+ */
+const loginEnabled = isConfigured && import.meta.env.VITE_ENABLE_LOGIN === 'true'
+
 export default function App() {
-  if (!isConfigured) return <NotConfigured />
+  if (!loginEnabled) return <LocalApp />
   return <Authed />
+}
+
+function LocalApp() {
+  const [ready, setReady] = useState(false)
+  useEffect(() => {
+    startLocalStore()
+    setReady(true)
+  }, [])
+  if (!ready) return null
+  return (
+    <NavProvider>
+      <Shell />
+      <ToastHost />
+      <PinGate />
+    </NavProvider>
+  )
 }
 
 function Authed() {

@@ -24,7 +24,7 @@ export function Settings() {
   const fileRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    if (!store.householdId) return
+    if (!store.householdId || store.local) return
     supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email || ''))
     supabase
       .from('households')
@@ -63,6 +63,18 @@ export function Settings() {
         </div>
       )}
 
+      {store.local && (
+        <div className="card" style={{ marginBottom: 8 }}>
+          <div style={{ fontWeight: 600, marginBottom: 4 }}>Saved on this phone</div>
+          <div className="caption" style={{ fontSize: 15 }}>
+            Sign-in is off for now, so your data stays only on this iPhone and doesn't sync to another phone. Use <b>Back up all data</b> below now
+            and then. When you turn on accounts later, you can restore that backup.
+          </div>
+        </div>
+      )}
+
+      {!store.local && (
+      <>
       <div className="list-header">House</div>
       <div className="list">
         <Row icon={<Users size={17} />} iconBg="#007AFF" title={house?.name || 'Our house'} sub={members.map((m) => m.display_name || 'Member').join(' & ') || ' '} />
@@ -75,6 +87,8 @@ export function Settings() {
           onClick={shareCode}
         />
       </div>
+      </>
+      )}
 
       <div className="list-header">Workers</div>
       <div className="list">
@@ -138,8 +152,10 @@ export function Settings() {
           }
         }}
       />
-      <p className="footnote">Photos stay in your cloud storage and are not inside the backup file.</p>
+      <p className="footnote">Photos are not inside the backup file.</p>
 
+      {!store.local && (
+      <>
       <div className="list-header">Sync</div>
       <div className="list">
         <Row
@@ -176,6 +192,8 @@ export function Settings() {
           }
         />
       </div>
+      </>
+      )}
       <p className="footnote" style={{ textAlign: 'center', marginTop: 24 }}>
         House Tracker · amounts in Tunisian dinars (DT)
       </p>

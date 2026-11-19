@@ -16,6 +16,8 @@ type OutboxItem = { table: TableName; row: Record<string, unknown> }
 export type StoreState = {
   householdId: string | null
   userId: string | null
+  /** Local mode: no account, nothing leaves this phone. */
+  local: boolean
   data: DataMap
   outbox: OutboxItem[]
   lastSync: string | null
@@ -30,6 +32,7 @@ const emptyData = (): DataMap =>
 let state: StoreState = {
   householdId: null,
   userId: null,
+  local: false,
   data: emptyData(),
   outbox: [],
   lastSync: null,
@@ -146,7 +149,7 @@ async function pull() {
 }
 
 export async function sync() {
-  if (!state.householdId) return
+  if (!state.householdId || state.local) return
   if (running) {
     again = true
     return
@@ -192,7 +195,7 @@ function onVisible() {
 export function startStore(householdId: string, userId: string) {
   if (state.householdId === householdId) return
   stopStore()
-  set({ householdId, userId, data: emptyData(), outbox: [], lastSync: null, error: null })
+  set({ householdId, userId, local: false, data: emptyData(), outbox: [], lastSync: null, error: null })
   load(householdId)
   window.addEventListener('online', onOnline)
   window.addEventListener('offline', onOffline)
@@ -202,6 +205,31 @@ export function startStore(householdId: string, userId: string) {
     .on('postgres_changes', { event: '*', schema: 'public' }, () => schedulePull())
     .subscribe()
   sync()
+}
+
+const DEFAULT_AREAS = ['Ground floor', 'First floor', 'Second floor', 'Stair tower', 'Exterior', 'Roof']
+
+/** Start without an account: data is kept only on this phone. */
+export function startLocalStore() {
+  let hid = ''
+  try {
+    hid = localStorage.getItem('ht:local-hid') || ''
+    if (!hid) {
+      hid = crypto.randomUUID()
+      localStorage.setItem('ht:local-hid', hid)
+    }
+  } catch {
+    hid = hid || crypto.randomUUID()
+  }
+  if (state.householdId === hid) return
+  set({ householdId: hid, userId: null, local: true, data: emptyData(), outbox: [], lastSync: null, error: null, online: true })
+  load(hid)
+  set({ outbox: [] })
+  // First launch: create the default areas the server would normally create.
+  if (!Object.keys(state.data.areas).length && !state.data.settings[hid]) {
+    saveSettings({})
+    DEFAULT_AREAS.forEach((name, sort) => save('areas', { name, sort }))
+  }
 }
 
 export function stopStore() {
@@ -235,7 +263,7 @@ export function save<K extends TableName>(table: K, input: Input<K>): Tables[K] 
   } as Tables[K]
   const tableData = { ...state.data[table], [row.id]: row }
   const outbox = state.outbox.filter((o) => !(o.table === table && o.row.id === row.id))
-  outbox.push({ table, row: row as unknown as Record<string, unknown> })
+  if (!state.local) outbox.push({ table, row: row as unknown as Record<string, unknown> })
   set({ data: { ...state.data, [table]: tableData }, outbox })
   persist()
   sync()

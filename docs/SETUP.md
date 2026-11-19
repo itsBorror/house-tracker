@@ -1,13 +1,16 @@
 # House Tracker: setup guide
 
-This takes about 20 minutes. You will:
+**Sign-in is switched off for now.** The app runs without an account and saves everything on the phone. That means you only need GitHub and Cloudflare to start using it (about 10 minutes):
 
-1. Merge the code into `main` on GitHub
-2. Create the database on **Supabase** (free)
-3. Put the app online with **Cloudflare Pages** (free)
-4. Install it on both iPhones
+1. **Step 1** below: merge the code
+2. **Step 3** below: put it online with Cloudflare Pages. **Skip 3.4** (no variables needed yet)
+3. **Step 4** below: open it in Safari and Add to Home Screen. You won't be asked to sign in.
 
-You never need to paste any password or secret key into a chat. The only two values you copy are the **Project URL** and the **Publishable (anon) key**, and both are safe to be public: your data is protected by the security rules in the database.
+While sign-in is off, data stays on that one iPhone and does not sync to your wife's phone. Make a backup now and then (Settings → **Back up all data**).
+
+**When you want both phones to share the same data**, do Step 2 (Supabase), then add the three variables in 3.4, including `VITE_ENABLE_LOGIN` = `true`, and redeploy. Restore your backup after signing in so you keep what you entered.
+
+You never need to paste any password or secret key into a chat. The only values you copy are the **Project URL** and the **Publishable (anon) key**, and both are safe to be public: your data is protected by the security rules in the database.
 
 ---
 
@@ -96,12 +99,15 @@ Fill in exactly:
 
 ### 3.4 Environment variables
 
-Still on the same page, open **Environment variables (advanced)** and click **+ Add variable** twice:
+Still on the same page, open **Environment variables (advanced)** and click **+ Add variable** three times:
 
 | Variable name | Value |
 |---|---|
 | `VITE_SUPABASE_URL` | your **Project URL** from step 2.5 |
 | `VITE_SUPABASE_ANON_KEY` | your **Publishable** (or **anon public**) key from step 2.5 |
+| `VITE_ENABLE_LOGIN` | `true` |
+
+(Only add these when you're ready for sign-in and sync. Without them the app runs on the phone only.)
 
 Then click **Save and Deploy**. Wait 1–2 minutes until it says **Success**, and click the link (`https://house-tracker.pages.dev`).
 

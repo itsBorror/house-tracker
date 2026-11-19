@@ -91,12 +91,12 @@ export function deletePhoto(p: Photo) {
   remove('photos', p.id)
   delBlob(p.id).catch(() => undefined)
   tx('pending', 'readwrite', (s) => s.delete(p.id)).catch(() => undefined)
-  supabase.storage.from('photos').remove([p.path]).catch(() => undefined)
+  if (!getState().local) supabase.storage.from('photos').remove([p.path]).catch(() => undefined)
 }
 
 let uploading = false
 export async function uploadPending() {
-  if (uploading || !navigator.onLine) return
+  if (uploading || !navigator.onLine || getState().local) return
   uploading = true
   try {
     const items = await tx<{ id: string; path: string }[]>('pending', 'readonly', (s) => s.getAll())
@@ -132,7 +132,7 @@ export function usePhotoUrl(photo: Pick<Photo, 'id' | 'path'> | null | undefined
     let alive = true
     ;(async () => {
       let blob = await getBlob(photo.id).catch(() => undefined)
-      if (!blob && navigator.onLine) {
+      if (!blob && navigator.onLine && !getState().local) {
         const { data } = await supabase.storage.from('photos').download(photo.path)
         if (data) {
           blob = data

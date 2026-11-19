@@ -190,16 +190,3 @@ export function HouseholdSetup({ onReady }: { onReady: (hid: string) => void }) 
     </div>
   )
 }
-
-export function NotConfigured() {
-  return (
-    <div className="center-screen">
-      <Logo />
-      <h1>Almost there</h1>
-      <p className="lead">
-        The app is not connected to Supabase yet. Add <b>VITE_SUPABASE_URL</b> and <b>VITE_SUPABASE_ANON_KEY</b> as environment
-        variables in Cloudflare Pages, then redeploy. The setup guide (docs/SETUP.md) shows exactly where.
-      </p>
-    </div>
-  )
-}

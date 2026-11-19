@@ -4,6 +4,8 @@ A private iPhone app (PWA) to track building our house: expenses, supplier debt,
 
 **Setting it up for the first time? Follow [docs/SETUP.md](docs/SETUP.md).**
 
+> Sign-in is currently off: the app runs in local mode and keeps data on the phone. Set `VITE_ENABLE_LOGIN=true` plus the two Supabase variables to turn on accounts and sync between both phones.
+
 ## What it does
 
 - **Home**: money needed to finish (remaining work + remaining supplier debt), spent, debt left, work left, % finished, a monthly spending chart, and reminder banners when a supplier or worker payment is due.
